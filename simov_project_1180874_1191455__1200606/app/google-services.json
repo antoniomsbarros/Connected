@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "379064144011",
+    "project_id": "simov-6334e",
+    "storage_bucket": "simov-6334e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379064144011:android:85a4fad980321493b1048e",
+        "android_client_info": {
+          "package_name": "com.example.simov_project_1180874_1191455__1200606"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "379064144011-mgnqe4ohacikc2d2vm5h85vh2hs06hr1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCkuwocZG97SseYxyIUJsYJBmGV5kjDtI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379064144011-mgnqe4ohacikc2d2vm5h85vh2hs06hr1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
