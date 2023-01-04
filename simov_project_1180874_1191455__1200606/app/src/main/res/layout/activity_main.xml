@@ -23,6 +23,13 @@
             android:layout_height="wrap_content"
             android:text="Logout" />
 
+        <Button
+            android:id="@+id/post"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Direct" />
+
     </LinearLayout>
 
     <Space

@@ -30,9 +30,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
         FirebaseAuth auth=FirebaseAuth.getInstance();
         FirebaseUser currentUser=auth.getCurrentUser();
         if (currentUser==null){
@@ -71,6 +68,18 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        Button post=findViewById(R.id.post);
+        post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                postimages();
+            }
+        });
+    }
+    private void postimages(){
+        Intent intent=new Intent(this, PostActivity.class);
+        startActivity(intent);
+        finish();
     }
     private void logoutUser(){
         FirebaseAuth.getInstance().signOut();
