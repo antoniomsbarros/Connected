@@ -106,6 +106,7 @@ public class PostActivity extends AppCompatActivity {
             return;
         }
         useruuid=currentUser.getUid();
+
         Buttonlocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

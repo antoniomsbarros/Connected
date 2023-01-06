@@ -30,6 +30,12 @@
             android:layout_weight="1"
             android:text="Direct" />
 
+        <Button
+            android:id="@+id/addfriend"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Add friend" />
     </LinearLayout>
 
     <Space

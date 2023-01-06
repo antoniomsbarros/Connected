@@ -5,6 +5,9 @@ public class Friends {
     private String uuiduserb;
     private FriendsStatus status;
 
+    public Friends() {
+    }
+
     public Friends(String uuidUserA, String uuiduserb, FriendsStatus status) {
         this.uuidUserA = uuidUserA;
         this.uuiduserb = uuiduserb;

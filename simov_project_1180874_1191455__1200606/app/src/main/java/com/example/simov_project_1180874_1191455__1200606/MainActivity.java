@@ -75,15 +75,30 @@ public class MainActivity extends AppCompatActivity {
                 postimages();
             }
         });
+        Button addfriendbyUsername=findViewById(R.id.addfriend);
+        addfriendbyUsername.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addfriendUsername();
+            }
+        });
     }
+
     private void postimages(){
         Intent intent=new Intent(this, PostActivity.class);
         startActivity(intent);
         finish();
     }
+
     private void logoutUser(){
         FirebaseAuth.getInstance().signOut();
         Intent intent=new Intent(this,Login.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void addfriendUsername(){
+        Intent intent=new Intent(this, AddfriendByUsername.class);
         startActivity(intent);
         finish();
     }
