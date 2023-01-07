@@ -60,6 +60,9 @@ public class RecyclerAdapter  extends RecyclerView.Adapter<RecyclerAdapter.ViewH
             holder.message.setText(tempShowPost.getFullname());
             Glide.with(context).load(tempShowPost.getImageURL()).into(holder.postImage);
             getCurrentUser();
+            if ( tempShowPost.likes!=null && tempShowPost.likes.contains(useruuid)){
+                holder.like.setColorFilter(Color.parseColor("#4C6CFF"));
+            }
             holder.like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -84,8 +87,6 @@ public class RecyclerAdapter  extends RecyclerView.Adapter<RecyclerAdapter.ViewH
                                                     holder.like.setColorFilter(Color.parseColor("#4C6CFF"));
                                                 }
                                             });
-                                        }else {
-                                            holder.like.setColorFilter(Color.parseColor("#4C6CFF"));
                                         }
                                     }
                                 }
