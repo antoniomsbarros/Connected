@@ -27,6 +27,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.simov_project_1180874_1191455__1200606.Entity.Post;
+import com.example.simov_project_1180874_1191455__1200606.Entity.User;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -34,8 +35,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -57,7 +61,7 @@ public class PostActivity extends AppCompatActivity {
     private TextInputLayout country;
     private TextInputLayout city;
     private TextInputLayout street;
-
+    private User currentUser;
     private String latidadetxt="";
     private String longitudetxt="";
     private String useruuid="";
@@ -68,7 +72,7 @@ public class PostActivity extends AppCompatActivity {
     private Uri filePath=null;
     private  StorageReference storageReference =null;
     private DatabaseReference databaseReference=null;
-
+    private DatabaseReference databaseReferenceUsers=null;
     private FusedLocationProviderClient fusedLocationProviderClient;
 
     private final int PICK_IMAGE_GALLERY_CODE=78;
@@ -85,7 +89,7 @@ public class PostActivity extends AppCompatActivity {
         FirebaseStorage firebaseStorage=FirebaseStorage.getInstance();
         storageReference=firebaseStorage.getReference();
         databaseReference=database.getReference().child("post");
-
+        databaseReferenceUsers=database.getReference().child("users");
         selectButton=findViewById(R.id.selectButton);
         uploadButton=findViewById(R.id.uploadButton);
         imagePreview=findViewById(R.id.imagePreview);
@@ -176,6 +180,7 @@ public class PostActivity extends AppCompatActivity {
 
     private void uploadImage() {
         if (filePath!=null){
+            getCurrentUserInfo();
             getLocationfrominout();
             progressBar.setVisibility(View.VISIBLE);
             StorageReference ref=storageReference.child("post/"+useruuid+"/"+ UUID.randomUUID().toString());
@@ -185,7 +190,7 @@ public class PostActivity extends AppCompatActivity {
                     ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            Post post=new Post(uri.toString(),useruuid,latidadetxt,longitudetxt);
+                            Post post=new Post(uri.toString(),useruuid,currentUser.email,currentUser.fullname,latidadetxt,longitudetxt);
                             databaseReference.push().setValue(post);
                             Toast.makeText(PostActivity.this,"Image uploaded successful",Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.GONE);
@@ -201,6 +206,25 @@ public class PostActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void getCurrentUserInfo() {
+        ValueEventListener valueEventListener= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds:snapshot.getChildren()) {
+                    if (ds.getKey().equals(useruuid)){
+                        currentUser=ds.getValue(User.class);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        databaseReferenceUsers.addValueEventListener(valueEventListener);
     }
 
     private void getLocationfrominout() {

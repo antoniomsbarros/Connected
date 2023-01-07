@@ -82,6 +82,14 @@ public class MainActivity extends AppCompatActivity {
                 addfriendUsername();
             }
         });
+
+        Button feed=findViewById(R.id.feed);
+        feed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                feed();
+            }
+        });
     }
 
     private void postimages(){
@@ -99,6 +107,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void addfriendUsername(){
         Intent intent=new Intent(this, AddfriendByUsername.class);
+        startActivity(intent);
+        finish();
+    }
+    private void feed(){
+        Intent intent=new Intent(this, FeedPost.class);
         startActivity(intent);
         finish();
     }
