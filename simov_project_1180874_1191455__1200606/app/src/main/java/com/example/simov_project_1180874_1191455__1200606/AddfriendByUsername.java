@@ -30,8 +30,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import kotlin.Pair;
-
 public class AddfriendByUsername extends AppCompatActivity implements ConfirmationDialog.DialogListener {
 
     private ListView listView;
