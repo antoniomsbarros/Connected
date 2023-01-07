@@ -113,6 +113,6 @@ public class MainActivity extends AppCompatActivity {
     private void feed(){
         Intent intent=new Intent(this, FeedPost.class);
         startActivity(intent);
-        finish();
+       // finish();
     }
 }

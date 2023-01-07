@@ -46,6 +46,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -190,7 +191,7 @@ public class PostActivity extends AppCompatActivity {
                     ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            Post post=new Post(uri.toString(),useruuid,currentUser.email,currentUser.fullname,latidadetxt,longitudetxt);
+                            Post post=new Post(uri.toString(),useruuid,currentUser.email,currentUser.fullname,latidadetxt,longitudetxt,new ArrayList<>());
                             databaseReference.push().setValue(post);
                             Toast.makeText(PostActivity.this,"Image uploaded successful",Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.GONE);
