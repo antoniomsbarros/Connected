@@ -23,6 +23,13 @@
             android:name=".CreateEventActivity"
             android:exported="false" />
         <activity
+            android:name=".FeedPost"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".AddfriendByUsername"
             android:exported="false">
             <meta-data

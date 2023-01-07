@@ -3,12 +3,16 @@ package com.example.simov_project_1180874_1191455__1200606.Entity;
 public class Post {
     private String ImageURL;
     private String UuidUser;
+    private String email;
+    private String fullname;
     private String latitude;
     private String longitude;
 
-    public Post(String imageURL, String uuidUser, String latitude, String longitude) {
+    public Post(String imageURL, String uuidUser, String email, String fullname, String latitude, String longitude) {
         ImageURL = imageURL;
         UuidUser = uuidUser;
+        this.email = email;
+        this.fullname = fullname;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -48,5 +52,19 @@ public class Post {
         UuidUser = uuidUser;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
 }
