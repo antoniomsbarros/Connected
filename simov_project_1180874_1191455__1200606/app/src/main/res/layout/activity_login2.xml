@@ -71,4 +71,13 @@
             android:textStyle="bold"/>
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/fingerPrint"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/ic_baseline_fingerprint_24"
+        app:tint="@color/purple_700"
+        android:layout_marginTop="75dp"/>
+
+
 </LinearLayout>

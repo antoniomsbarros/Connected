@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     private void addfriendUsername(){
         Intent intent=new Intent(this, AddfriendByUsername.class);
         startActivity(intent);
-        finish();
+        //finish();
     }
     private void feed(){
         Intent intent=new Intent(this, FeedPost.class);
