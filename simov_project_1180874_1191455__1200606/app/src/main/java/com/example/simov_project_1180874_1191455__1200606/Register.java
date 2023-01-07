@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.simov_project_1180874_1191455__1200606.Entity.FingerPrintStatusEnum;
 import com.example.simov_project_1180874_1191455__1200606.Entity.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -75,7 +77,7 @@ public class Register extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            User user=new User(fullNameTxt,emailTxt,phoneTxt,passwordTxt);
+                            User user=new User(fullNameTxt,emailTxt,phoneTxt,passwordTxt, FingerPrintStatusEnum.Pending);
                             FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override

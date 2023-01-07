@@ -2,7 +2,6 @@ package com.example.simov_project_1180874_1191455__1200606;
 
 import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG;
 import static androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricManager;
@@ -20,12 +19,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.simov_project_1180874_1191455__1200606.Entity.FingerPrintStatusEnum;
+import com.example.simov_project_1180874_1191455__1200606.Entity.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.Executor;
 
@@ -35,6 +40,7 @@ public class Login extends AppCompatActivity {
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://simov-6334e-default-rtdb.firebaseio.com/");
     ImageView fingerPrint;
     FirebaseAuth myAuth;
+
     private Executor executor;
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
@@ -76,7 +82,30 @@ public class Login extends AppCompatActivity {
         sharedPreferences=getSharedPreferences("data",MODE_PRIVATE);
         boolean isLogin=sharedPreferences.getBoolean("isLogin",false);
         if (isLogin){
-            fingerPrint.setVisibility(View.VISIBLE);
+
+            DatabaseReference databaseReferenceUsers=FirebaseDatabase.getInstance().getReference("users");
+            databaseReferenceUsers.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot ds:snapshot.getChildren()) {
+                        String emailfingerprint=sharedPreferences.getString("email","");
+                        User user=ds.getValue(User.class);
+                        if ( user!=null && user.getEmail().equals(emailfingerprint)){
+                            if (user.getFingerPrintStatusEnum().equals(FingerPrintStatusEnum.Accept)){
+                                fingerPrint.setVisibility(View.VISIBLE);
+
+                            }else {
+                                fingerPrint.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
 
         BiometricManager biometricManager = BiometricManager.from(this);
@@ -155,11 +184,6 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
-                            editor.putString("email",emailTxt);
-                            editor.putString("password",passwordTxt);
-                            editor.putBoolean("isLogin",true);
-                            editor.apply();
                             progressDialog.dismiss();
                             showMainActivity();
                         } else {

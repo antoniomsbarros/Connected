@@ -4,12 +4,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.simov_project_1180874_1191455__1200606.Dialog.ConfirmationDialog;
+import com.example.simov_project_1180874_1191455__1200606.Dialog.FingerPrintConfirmationDialog;
+import com.example.simov_project_1180874_1191455__1200606.Entity.FingerPrintStatusEnum;
 import com.example.simov_project_1180874_1191455__1200606.Entity.User;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,9 +28,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.FileInputStream;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements FingerPrintConfirmationDialog.DialogListener {
 
     TextView fullNameTxt,phoneTxt,email;
+    private String uid="";
+    FirebaseDatabase database;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
                 logoutUser();
             }
         });
-        FirebaseDatabase database=FirebaseDatabase.getInstance();
-        String uid=currentUser.getUid();
+        database=FirebaseDatabase.getInstance();
+        uid=currentUser.getUid();
         DatabaseReference reference=database.getReference("users").child(uid);
 
         reference.addValueEventListener(new ValueEventListener() {
@@ -60,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
                     fullNameTxt.setText("Full Name: "+user.getFullname());
                     email.setText("Email: "+user.getEmail());
                     phoneTxt.setText("Phone: "+ user.getPhone());
+                    if (user.getFingerPrintStatusEnum().equals(FingerPrintStatusEnum.Pending)){
+                        openDialog();
+                    }
                 }
             }
 
@@ -97,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void openDialog(){
+        FingerPrintConfirmationDialog dialog=new FingerPrintConfirmationDialog();
+        dialog.show(getSupportFragmentManager(),"Example");
+    }
+
     private void postimages(){
         Intent intent=new Intent(this, PostActivity.class);
         startActivity(intent);
@@ -125,5 +141,58 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CreateEventActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onConfirmed() {
+        DatabaseReference reference=database.getReference("users").child(uid);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user=snapshot.getValue(User.class);
+                if (user!=null){
+                    user.fingerPrintStatusEnum=FingerPrintStatusEnum.Accept;
+                    reference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
+                            editor.putString("email",user.email);
+                            editor.putString("password",user.password);
+                            editor.putBoolean("isLogin",true);
+                            editor.apply();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onCancelled() {
+        DatabaseReference reference=database.getReference("users").child(uid);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user=snapshot.getValue(User.class);
+                if (user!=null){
+                    user.fingerPrintStatusEnum=FingerPrintStatusEnum.Reject;
+                    reference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            System.out.println("olaola");
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

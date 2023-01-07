@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.simov_project_1180874_1191455__1200606.Dialog.ConfirmationDialog;
 import com.example.simov_project_1180874_1191455__1200606.Entity.Friends;
 import com.example.simov_project_1180874_1191455__1200606.Entity.FriendsStatus;
 import com.example.simov_project_1180874_1191455__1200606.Entity.User;
@@ -28,7 +29,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class AddfriendByUsername extends AppCompatActivity implements ConfirmationDialog.DialogListener {
 

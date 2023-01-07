@@ -5,18 +5,25 @@ public class User {
     public String email;
     public String phone;
     public String password;
-
+    public FingerPrintStatusEnum fingerPrintStatusEnum;
     public User() {
     }
 
-    public User(String fullname, String email, String phone, String password) {
+    public User(String fullname, String email, String phone, String password, FingerPrintStatusEnum fingerPrintStatusEnum) {
         this.fullname = fullname;
         this.email = email;
         this.phone = phone;
         this.password = password;
+        this.fingerPrintStatusEnum = fingerPrintStatusEnum;
     }
 
+    public FingerPrintStatusEnum getFingerPrintStatusEnum() {
+        return fingerPrintStatusEnum;
+    }
 
+    public void setFingerPrintStatusEnum(FingerPrintStatusEnum fingerPrintStatusEnum) {
+        this.fingerPrintStatusEnum = fingerPrintStatusEnum;
+    }
 
     public String getFullname() {
         return fullname;
