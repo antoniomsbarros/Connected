@@ -82,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
                 addfriendUsername();
             }
         });
+
+        Button createEvent = findViewById(R.id.createEvent);
+        createEvent.setOnClickListener((v) -> {
+            createEvent();
+        });
     }
 
     private void postimages(){
@@ -99,6 +104,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void addfriendUsername(){
         Intent intent=new Intent(this, AddfriendByUsername.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void createEvent() {
+        Intent intent = new Intent(this, CreateEventActivity.class);
         startActivity(intent);
         finish();
     }
