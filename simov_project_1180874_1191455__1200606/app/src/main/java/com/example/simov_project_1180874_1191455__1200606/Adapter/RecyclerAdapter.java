@@ -40,6 +40,7 @@ public class RecyclerAdapter  extends RecyclerView.Adapter<RecyclerAdapter.ViewH
     private FirebaseUser firebaseUser;
     private String useruuid;
     private FirebaseDatabase database;
+
     public RecyclerAdapter(ArrayList<Post> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
@@ -121,6 +122,7 @@ public class RecyclerAdapter  extends RecyclerView.Adapter<RecyclerAdapter.ViewH
             like=itemView.findViewById(R.id.ivLike);
         }
     }
+
     private void getCurrentUser() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         firebaseUser = auth.getCurrentUser();
