@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity  implements FingerPrintConfi
                     fullNameTxt.setText("Full Name: "+user.getFullname());
                     email.setText("Email: "+user.getEmail());
                     phoneTxt.setText("Phone: "+ user.getPhone());
-                    if (user.getFingerPrintStatusEnum()!=null && user.getFingerPrintStatusEnum().equals(FingerPrintStatusEnum.Pending)){
+                    if (user.getFingerPrintStatusEnum().equals(FingerPrintStatusEnum.Pending)){
                         openDialog();
                     }
                 }

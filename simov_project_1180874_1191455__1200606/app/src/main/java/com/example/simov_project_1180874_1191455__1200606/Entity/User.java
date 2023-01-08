@@ -1,11 +1,14 @@
 package com.example.simov_project_1180874_1191455__1200606.Entity;
 
+import java.util.Objects;
+
 public class User {
     public String fullname;
     public String email;
     public String phone;
     public String password;
     public FingerPrintStatusEnum fingerPrintStatusEnum;
+
     public User() {
     }
 
@@ -55,5 +58,22 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return fullname.equals(user.fullname)
+                && email.equals(user.email)
+                && phone.equals(user.phone)
+                && password.equals(user.password)
+                && fingerPrintStatusEnum == user.fingerPrintStatusEnum;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fullname, email, phone, password, fingerPrintStatusEnum);
     }
 }

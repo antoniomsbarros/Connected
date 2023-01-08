@@ -24,6 +24,22 @@
         android:theme="@style/Theme.Simov_project_1180874_1191455__1200606"
         tools:targetApi="31">
         <activity
+            android:name=".FriendsListActivity"
+            android:exported="false" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
+        <activity
+            android:name=".LocationActivity"
+            android:exported="false"
+            android:label="LocationActivity" />
+        <activity
+            android:name=".MapActivity"
+            android:exported="false"
+            android:label="MapActivity" />
+        <activity
             android:name=".CreateEventActivity"
             android:exported="false" />
         <activity

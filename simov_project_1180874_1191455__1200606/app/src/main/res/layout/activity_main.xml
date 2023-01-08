@@ -36,6 +36,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Add friend" />
+
         <Button
             android:id="@+id/feed"
             android:layout_width="wrap_content"
@@ -89,10 +90,29 @@
         android:layout_height="wrap_content"
         android:layout_weight="5" />
 
-    <Button
-        android:id="@+id/createEvent"
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create Event" />
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/createEvent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Event" />
+
+        <Button
+            android:id="@+id/openMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Open Map" />
+
+        <Button
+            android:id="@+id/openFriends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Friends List" />
+    </LinearLayout>
+
 
 </LinearLayout>

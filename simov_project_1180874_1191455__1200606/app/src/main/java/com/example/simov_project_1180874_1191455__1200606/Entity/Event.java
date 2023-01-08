@@ -3,16 +3,23 @@ package com.example.simov_project_1180874_1191455__1200606.Entity;
 import java.util.Date;
 
 public class Event {
+    private static final String NO_USER = "N/A";
+
     private String name;
     private String description;
     private Date date;
     private String image;
-    private String latitude;
-    private String longitude;
+    private double latitude;
+    private double longitude;
     private final String uuidUser;
     private final Group attendingMembers;
 
-    public Event(String name, String description, Date date, String image, String latitude, String longitude, String uuidUser) {
+    public Event() {
+        this.uuidUser = NO_USER;
+        this.attendingMembers = new Group();
+    }
+
+    public Event(String name, String description, Date date, String image, double latitude, double longitude, String uuidUser) {
         this.name = name;
         this.description = description;
         this.date = date;
@@ -39,11 +46,11 @@ public class Event {
         return image;
     }
 
-    public String getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public String getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
@@ -71,11 +78,11 @@ public class Event {
         this.image = image;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 

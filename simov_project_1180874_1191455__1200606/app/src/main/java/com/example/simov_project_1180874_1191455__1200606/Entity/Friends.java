@@ -1,5 +1,7 @@
 package com.example.simov_project_1180874_1191455__1200606.Entity;
 
+import java.util.Objects;
+
 public class Friends {
     private String uuidUserA;
     private String uuiduserb;
@@ -36,5 +38,31 @@ public class Friends {
 
     public void setStatus(FriendsStatus status) {
         this.status = status;
+    }
+
+    private boolean isFriend(String uuidUser) {
+        if (!uuidUserA.equals(uuidUser) && !uuiduserb.equals(uuidUser)) return false;
+        return status.equals(FriendsStatus.accept);
+    }
+
+    public String getFriend(String uuidUser) {
+        if (!isFriend(uuidUser)) return null;
+        if (uuidUserA.equals(uuidUser)) return uuiduserb;
+        return uuidUserA;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Friends friends = (Friends) o;
+        return uuidUserA.equals(friends.uuidUserA)
+                && uuiduserb.equals(friends.uuiduserb)
+                && status == friends.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuidUserA, uuiduserb, status);
     }
 }
