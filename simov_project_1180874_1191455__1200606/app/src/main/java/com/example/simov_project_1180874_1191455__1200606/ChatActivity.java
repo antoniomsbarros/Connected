@@ -36,6 +36,7 @@ public class ChatActivity extends AppCompatActivity {
     DatabaseReference databaseReference;
     EditText newMessageBox;
     ImageView sendMessageICon;
+    TextView messageUser;
     private String uuidUser;
     private String uuidFriend;
     private String userEmail;
@@ -71,7 +72,7 @@ public class ChatActivity extends AppCompatActivity {
         sendMessageICon = findViewById(R.id.sendMessageIcon);
         recyclerView = findViewById(R.id.conversa);
         username = findViewById(R.id.userNameShow);
-
+        //messageUser = findViewById(R.id.userNameDisplay);
         //mDatabase.child("users").child(userId).child("username").setValue(name);
         setupAdapter();
         fetchMessages();
@@ -137,7 +138,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendMessage(){
         String newMessage = newMessageBox.getText().toString();
-        if(newMessage != ""){
+        if(newMessage.equals("")){
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 Message toSend = new Message(uuidFriend, uuidUser, newMessage, LocalDateTime.now());
                 databaseReference.child("message").push().setValue(toSend);
