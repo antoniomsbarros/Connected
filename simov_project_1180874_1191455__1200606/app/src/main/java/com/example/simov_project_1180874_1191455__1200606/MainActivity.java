@@ -111,6 +111,21 @@ public class MainActivity extends AppCompatActivity implements FingerPrintConfir
 
         Button openFriends = findViewById(R.id.openFriends);
         openFriends.setOnClickListener(this::openFriends);
+
+        Button messages = findViewById((R.id.messages));
+        messages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createMessage();
+            }
+        });
+    }
+
+    private void createMessage() {
+        Intent intent=new Intent(this, MessagesActivity.class);
+        startActivity(intent);
+        //finish();
+
     }
 
     private void openDialog() {
