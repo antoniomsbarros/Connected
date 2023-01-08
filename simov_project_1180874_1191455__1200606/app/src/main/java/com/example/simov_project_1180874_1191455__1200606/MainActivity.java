@@ -108,6 +108,9 @@ public class MainActivity extends AppCompatActivity implements FingerPrintConfir
 
         Button openMap = findViewById(R.id.openMap);
         openMap.setOnClickListener(this::openMap);
+
+        Button openFriends = findViewById(R.id.openFriends);
+        openFriends.setOnClickListener(this::openFriends);
     }
 
     private void openDialog() {
@@ -148,6 +151,12 @@ public class MainActivity extends AppCompatActivity implements FingerPrintConfir
 
     private void openMap(View v) {
         Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void openFriends(View v) {
+        Intent intent = new Intent(this, FriendsListActivity.class);
         startActivity(intent);
         finish();
     }

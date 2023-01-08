@@ -106,6 +106,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Open Map" />
+
+        <Button
+            android:id="@+id/openFriends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Friends List" />
     </LinearLayout>
 
 
