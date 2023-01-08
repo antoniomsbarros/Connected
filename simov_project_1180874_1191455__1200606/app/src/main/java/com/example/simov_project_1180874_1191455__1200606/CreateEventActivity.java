@@ -17,6 +17,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.simov_project_1180874_1191455__1200606.Entity.Event;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -40,7 +44,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.UUID;
 
 public class CreateEventActivity extends AppCompatActivity {
     private final static String TAG = "CreateEventActivity";
@@ -50,25 +53,33 @@ public class CreateEventActivity extends AppCompatActivity {
     private final String DATE_FORMAT = "%04d/%02d/%02d";
     private final String PARSE_FORMAT = "yyyy/mm/dd";
     private final int PICK_IMAGE_GALLERY_CODE = 78;
-    private final int CAMERA_PERMISSION_REQUEST_CODE = 12345;
-    private final int STORAGE_PERMISSION_REQUEST_CODE = 12945;
-    private final int CAMERA_PICTURE_REQUEST_CODE = 56789;
-    private final int REQUEST_FINE_LOCATION = 100;
+    private final int CAMERA_PERMISSION_REQUEST_CODE = 10492;
+    private final int STORAGE_PERMISSION_REQUEST_CODE = 10493;
+    private final int LOCATION_PERMISSION_REQUEST_CODE = 10494;
+    private final int CAMERA_PICTURE_REQUEST_CODE = 10495;
+    private final int LOCATION_SELECT_REQUEST_CODE = 10496;
+    private final String INTENT_LOCATION_EXTRA_NAME = "location";
 
     // Properties
     private DatabaseReference databaseRef;
     private StorageReference storageRef;
+    private FusedLocationProviderClient locationClient;
 
     private ProgressBar progressBar;
     private ImageView imageView;
     private EditText nameInput;
     private EditText descriptionInput;
     private EditText dateInput;
-    private DatePickerDialog dateDialog;
+    private TextView latitudeView;
+    private TextView longitudeView;
+    private Button currentLocationButton;
+    private Button customLocationButton;
     private Button uploadButton;
     private Button createButton;
 
     private Uri imagePath;
+    private double latitude;
+    private double longitude;
     private String uuidUser;
 
     // Private Methods
@@ -81,6 +92,8 @@ public class CreateEventActivity extends AppCompatActivity {
         storageRef = FirebaseStorage
                 .getInstance()
                 .getReference();
+        locationClient = LocationServices
+                .getFusedLocationProviderClient(this);
 
         Log.i(TAG, "Loading View components into data...");
         progressBar = findViewById(R.id.createEventProgressBar);
@@ -88,8 +101,15 @@ public class CreateEventActivity extends AppCompatActivity {
         nameInput = findViewById(R.id.createEventNameTextField);
         descriptionInput = findViewById(R.id.createEventDescriptionTextField);
         dateInput = findViewById(R.id.createEventDateTextField);
+        latitudeView = findViewById(R.id.createEventLatitudeTextView);
+        longitudeView = findViewById(R.id.createEventLongitudeTextView);
+        currentLocationButton = findViewById(R.id.createEventCurrentLocationButton);
+        customLocationButton = findViewById(R.id.createEventCustomLocationButton);
         uploadButton = findViewById(R.id.createEventUploadImageButton);
         createButton = findViewById(R.id.createEventButton);
+
+        Log.i(TAG, "Initializing Location...");
+        changeLocation(0, 0);
     }
 
     private void authorize() {
@@ -110,8 +130,10 @@ public class CreateEventActivity extends AppCompatActivity {
 
     private void setupHandlers() {
         Log.i(TAG, "Setting up event handlers...");
-        uploadButton.setOnClickListener(this::openImageDialog);
         dateInput.setOnClickListener(this::openDatePicker);
+        currentLocationButton.setOnClickListener(this::requestLocation);
+        customLocationButton.setOnClickListener(this::openMap);
+        uploadButton.setOnClickListener(this::openImageDialog);
         createButton.setOnClickListener(this::createEvent);
     }
 
@@ -131,24 +153,16 @@ public class CreateEventActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (!validatePermission(requestCode, grantResults[1])) return;
         switch (requestCode) {
             case CAMERA_PERMISSION_REQUEST_CODE:
-                if (grantResults[1] != PackageManager.PERMISSION_GRANTED) {
-                    Toast
-                            .makeText(this, "Camera can not be used without permission!", Toast.LENGTH_SHORT)
-                            .show();
-                    return;
-                }
                 openCamera();
                 break;
             case STORAGE_PERMISSION_REQUEST_CODE:
-                if (grantResults[1] != PackageManager.PERMISSION_GRANTED) {
-                    Toast
-                            .makeText(this, "Storage can not be accessed without permission!", Toast.LENGTH_SHORT)
-                            .show();
-                    return;
-                }
                 openGallery();
+                break;
+            case LOCATION_PERMISSION_REQUEST_CODE:
+                getLocation();
                 break;
             default:
                 break;
@@ -193,9 +207,25 @@ public class CreateEventActivity extends AppCompatActivity {
                 String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Unknown", null);
                 imagePath = Uri.parse(path);
                 break;
+            case LOCATION_SELECT_REQUEST_CODE:
+                Bundle location = data.getExtras();
+                LatLng coordinates = (LatLng) location.get(INTENT_LOCATION_EXTRA_NAME);
+                changeLocation(coordinates.latitude, coordinates.longitude);
+                break;
             default:
                 break;
         }
+    }
+
+    private boolean validatePermission(int requestCode, int result) {
+        if (result != PackageManager.PERMISSION_GRANTED) {
+            final String error = "Permission denied for request code: " + requestCode;
+            Toast
+                    .makeText(this, error, Toast.LENGTH_SHORT)
+                    .show();
+            return false;
+        }
+        return true;
     }
 
     // Event Handlers
@@ -265,12 +295,47 @@ public class CreateEventActivity extends AppCompatActivity {
         final int currentMonth = calendar.get(Calendar.MONTH);
         final int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        dateDialog = new DatePickerDialog(this, this::setDateOnChange, currentYear, currentMonth, currentDay);
-        dateDialog.show();
+        new DatePickerDialog(this, this::setDateOnChange, currentYear, currentMonth, currentDay).show();
     }
 
     private void setDateOnChange(DatePicker view, int year, int month, int day) {
         dateInput.setText(String.format(DATE_FORMAT, year, month + 1, day));
+    }
+
+    private void requestLocation(View v) {
+        if (requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSION_REQUEST_CODE)) {
+            return;
+        }
+        getLocation();
+    }
+
+    private void getLocation() {
+        locationClient
+                .getLastLocation()
+                .addOnSuccessListener(location -> {
+                    if (location == null) {
+                        changeLocation(0, 0);
+                        final String message = "Activate Location to use this feature!";
+                        Toast
+                                .makeText(this, message, Toast.LENGTH_SHORT)
+                                .show();
+                        return;
+                    }
+                    changeLocation(location.getLatitude(), location.getLongitude());
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "An error has occurred: " + e.getMessage()));
+    }
+
+    private void openMap(View v) {
+        Intent intent = new Intent(this, LocationActivity.class);
+        startActivityForResult(intent, LOCATION_SELECT_REQUEST_CODE);
+    }
+
+    private void changeLocation(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.latitudeView.setText(String.format("Latitude: %s", latitude));
+        this.longitudeView.setText(String.format("Longitude: %s", longitude));
     }
 
     private void createEvent(View v) {
@@ -298,7 +363,7 @@ public class CreateEventActivity extends AppCompatActivity {
 
             imageRef.putFile(imagePath).addOnSuccessListener(taskSnapshot -> {
                         imageRef.getDownloadUrl().addOnSuccessListener(fsUri -> {
-                            Event event = new Event(name, description, date, fsUri.toString(), null, null, uuidUser);
+                            Event event = new Event(name, description, date, fsUri.toString(), latitude, longitude, uuidUser);
                             databaseRef.push().setValue(event);
                             progressBar.setVisibility(View.GONE);
                             Toast
@@ -319,7 +384,6 @@ public class CreateEventActivity extends AppCompatActivity {
     }
 
     private void backToMain() {
-        // FIXME: return to main w/o new intent?
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

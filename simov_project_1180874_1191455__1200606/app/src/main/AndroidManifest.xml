@@ -25,6 +25,10 @@
             android:value="${MAPS_API_KEY}" />
 
         <activity
+            android:name=".LocationActivity"
+            android:exported="false"
+            android:label="LocationActivity" />
+        <activity
             android:name=".MapActivity"
             android:exported="false"
             android:label="MapActivity" />
