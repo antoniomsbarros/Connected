@@ -14,14 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.simov_project_1180874_1191455__1200606.CommentActivity;
 import com.example.simov_project_1180874_1191455__1200606.Entity.Post;
-import com.example.simov_project_1180874_1191455__1200606.Entity.TempShowPost;
-import com.example.simov_project_1180874_1191455__1200606.Entity.User;
-import com.example.simov_project_1180874_1191455__1200606.Login;
+import com.example.simov_project_1180874_1191455__1200606.FeedPost;
 import com.example.simov_project_1180874_1191455__1200606.R;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,9 +28,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 public class RecyclerAdapter  extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+    private final int ADD_COMMENT_REQUEST_CODE = 94377;
+    private final int ADD_COMMENT_FAILURE_CODE = 94379;
 
     private ArrayList<Post> arrayList;
     private Context context;
@@ -99,6 +97,23 @@ public class RecyclerAdapter  extends RecyclerView.Adapter<RecyclerAdapter.ViewH
                     });
                 }
             });
+
+            holder.comment.setOnClickListener(v -> addComment(tempShowPost.getImageURL()));
+    }
+
+    private void addComment(String imageUri) {
+        Intent intent = new Intent(context, CommentActivity.class);
+        intent.putExtra("post", imageUri);
+        ((FeedPost)context).startActivityForResult(intent, ADD_COMMENT_REQUEST_CODE);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != ADD_COMMENT_REQUEST_CODE) return;
+        if (resultCode == ADD_COMMENT_FAILURE_CODE) {
+            Toast.makeText(context, "An unknown error has occurred!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Toast.makeText(context, "Comment added!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -112,6 +127,7 @@ public class RecyclerAdapter  extends RecyclerView.Adapter<RecyclerAdapter.ViewH
         TextView title;
         TextView message;
         ImageView like;
+        ImageView comment;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             profileImage=itemView.findViewById(R.id.ivProfile);
@@ -119,6 +135,7 @@ public class RecyclerAdapter  extends RecyclerView.Adapter<RecyclerAdapter.ViewH
             title=itemView.findViewById(R.id.title12);
             message=itemView.findViewById(R.id.message);
             like=itemView.findViewById(R.id.ivLike);
+            comment = itemView.findViewById(R.id.ivComment);
         }
     }
     private void getCurrentUser() {

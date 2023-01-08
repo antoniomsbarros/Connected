@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.simov_project_1180874_1191455__1200606.Adapter.FriendAdapter;
 import com.example.simov_project_1180874_1191455__1200606.Entity.Friends;
@@ -19,8 +18,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +32,6 @@ public class FriendsListActivity extends AppCompatActivity {
 
     // Properties
     private DatabaseReference databaseRef;
-    private StorageReference storageRef;
 
     private ListView listView;
     private FriendAdapter adapter;
@@ -48,9 +44,6 @@ public class FriendsListActivity extends AppCompatActivity {
     private void initialize() {
         Log.i(TAG, "Initializing Database and Storage...");
         databaseRef = FirebaseDatabase
-                .getInstance()
-                .getReference();
-        storageRef = FirebaseStorage
                 .getInstance()
                 .getReference();
 
@@ -130,8 +123,6 @@ public class FriendsListActivity extends AppCompatActivity {
     private void setupAdapter() {
         adapter = new FriendAdapter(this, users);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener((adapterView, view, i, l) ->
-                Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show());
     }
 
     @Override
