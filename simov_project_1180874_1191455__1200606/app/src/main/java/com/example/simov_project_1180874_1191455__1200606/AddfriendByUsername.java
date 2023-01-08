@@ -35,13 +35,14 @@ public class AddfriendByUsername extends AppCompatActivity implements Confirmati
     private ListView listView;
     private DatabaseReference databaseReference=null;
     private DatabaseReference databaseReferenceFriends=null;
-
+    private  User currentUser=new User();
     private FirebaseDatabase database;
     private ArrayList<String> names;
     private ArrayList<String>uuids;
     private String useruuid;
 
     private String secundUseruuid;
+    private String secundName;
     ArrayAdapter<String> arrayAdapter;
 
     @Override
@@ -71,6 +72,7 @@ public class AddfriendByUsername extends AppCompatActivity implements Confirmati
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 openDialog();
                 secundUseruuid=uuids.get(i);
+                secundName=names.get(i);
             }
         });
     }
@@ -84,12 +86,15 @@ public class AddfriendByUsername extends AppCompatActivity implements Confirmati
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()) {
+                    User user=ds.getValue(User.class);
                     if (!useruuid.equals(ds.getKey())){
                         String name=ds.child("fullname").getValue(String.class);
-                        User user=ds.getValue(User.class);
                        names.add(name);
                         uuids.add(ds.getKey());
                         allusers.add(user);
+                    }
+                    if (ds.getKey().equals(useruuid)){
+                        currentUser=user;
                     }
                 }
             }
@@ -133,13 +138,6 @@ public class AddfriendByUsername extends AppCompatActivity implements Confirmati
 
 
 
-        User currentUser=new User();
-        ArrayList<User> friends=new ArrayList<>();
-        for (int i = 0; i < allusers.size(); i++) {
-            if (useruuid.equals(uuids.get(i))){
-                currentUser=allusers.get(i);
-            }
-        }
 
 
 /*
@@ -213,7 +211,7 @@ public class AddfriendByUsername extends AppCompatActivity implements Confirmati
     @Override
     public void onConfirmed() {
         if (secundUseruuid!=null){
-            databaseReferenceFriends.push().setValue(new Friends(useruuid,secundUseruuid,FriendsStatus.Pending)).addOnSuccessListener(new OnSuccessListener<Void>() {
+            databaseReferenceFriends.push().setValue(new Friends(useruuid,secundUseruuid,currentUser.email,FriendsStatus.Pending)).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {
                     Toast.makeText(AddfriendByUsername.this,"Request Sent success",Toast.LENGTH_SHORT).show();

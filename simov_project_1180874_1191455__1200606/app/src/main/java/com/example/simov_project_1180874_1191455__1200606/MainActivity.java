@@ -106,6 +106,20 @@ public class MainActivity extends AppCompatActivity  implements FingerPrintConfi
         createEvent.setOnClickListener((v) -> {
             createEvent();
         });
+
+        Button confirmFriendsRequest=findViewById(R.id.confirmFriendsRequest);
+        confirmFriendsRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FriendsRequest();
+            }
+        });
+    }
+
+    private void FriendsRequest() {
+        Intent intent=new Intent(this, AcceptRejectFriendReqest.class);
+        startActivity(intent);
+        //finish();
     }
 
     private void openDialog(){

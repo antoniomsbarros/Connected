@@ -6,14 +6,15 @@ public class Friends {
     private String uuidUserA;
     private String uuiduserb;
     private FriendsStatus status;
-
+    private  String uidUseremail;
     public Friends() {
     }
 
-    public Friends(String uuidUserA, String uuiduserb, FriendsStatus status) {
+    public Friends(String uuidUserA, String uuiduserb,String uidUseremail, FriendsStatus status) {
         this.uuidUserA = uuidUserA;
         this.uuiduserb = uuiduserb;
         this.status = status;
+        this.uidUseremail=uidUseremail;
     }
 
     public String getUuidUserA() {
@@ -45,11 +46,20 @@ public class Friends {
         return status.equals(FriendsStatus.accept);
     }
 
+    public String getUidUseremail() {
+        return uidUseremail;
+    }
+
+    public void setUidUseremail(String uidUseremail) {
+        this.uidUseremail = uidUseremail;
+    }
+
     public String getFriend(String uuidUser) {
         if (!isFriend(uuidUser)) return null;
         if (uuidUserA.equals(uuidUser)) return uuiduserb;
         return uuidUserA;
     }
+
 
     @Override
     public boolean equals(Object o) {

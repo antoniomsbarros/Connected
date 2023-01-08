@@ -101,7 +101,7 @@ public class FeedPost extends AppCompatActivity {
                         }
                     }
                 }
-            recyclerAdapter.notifyDataSetChanged();
+                recyclerAdapter.notifyDataSetChanged();
             }
 
             @Override
