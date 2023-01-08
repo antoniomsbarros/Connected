@@ -111,17 +111,40 @@ public class MainActivity extends AppCompatActivity implements FingerPrintConfir
 
         Button openFriends = findViewById(R.id.openFriends);
         openFriends.setOnClickListener(this::openFriends);
-    }
 
+        Button friend=findViewById(R.id.confirmFriendsRequest);
+        friend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openfriendRequest();
+            }
+        });
+
+        Button chat=findViewById(R.id.messages);
+        chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openchat();
+            }
+        });
+
+    }
+    private void openchat(){
+        Intent intent = new Intent(this, MessagesActivity.class);
+        startActivity(intent);
+    }
     private void openDialog() {
         FingerPrintConfirmationDialog dialog = new FingerPrintConfirmationDialog();
         dialog.show(getSupportFragmentManager(), "Example");
     }
-
+    private void openfriendRequest() {
+        Intent intent = new Intent(this, AcceptRejectFriendReqest.class);
+        startActivity(intent);
+    }
     private void postimages() {
         Intent intent = new Intent(this, PostActivity.class);
         startActivity(intent);
-        finish();
+     //   finish();
     }
 
     private void logoutUser() {
@@ -146,19 +169,19 @@ public class MainActivity extends AppCompatActivity implements FingerPrintConfir
     private void createEvent(View v) {
         Intent intent = new Intent(this, CreateEventActivity.class);
         startActivity(intent);
-        finish();
+     //   finish();
     }
 
     private void openMap(View v) {
         Intent intent = new Intent(this, MapActivity.class);
         startActivity(intent);
-        finish();
+       // finish();
     }
 
     private void openFriends(View v) {
         Intent intent = new Intent(this, FriendsListActivity.class);
         startActivity(intent);
-        finish();
+       // finish();
     }
 
     @Override
