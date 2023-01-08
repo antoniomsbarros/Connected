@@ -28,47 +28,48 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.FileInputStream;
 
-public class MainActivity extends AppCompatActivity  implements FingerPrintConfirmationDialog.DialogListener {
+public class MainActivity extends AppCompatActivity implements FingerPrintConfirmationDialog.DialogListener {
 
-    TextView fullNameTxt,phoneTxt,email;
-    private String uid="";
+    TextView fullNameTxt, phoneTxt, email;
+    private String uid = "";
     FirebaseDatabase database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseAuth auth=FirebaseAuth.getInstance();
-        FirebaseUser currentUser=auth.getCurrentUser();
-        if (currentUser==null){
-            Intent intent=new Intent(this,Login.class);
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            Intent intent = new Intent(this, Login.class);
             startActivity(intent);
             finish();
             return;
         }
-        fullNameTxt=findViewById(R.id.tvFirstName);
-        phoneTxt=findViewById(R.id.phone2);
-        email=findViewById(R.id.tvEmail);
-        Button btnLogout=findViewById(R.id.btnLogout);
+        fullNameTxt = findViewById(R.id.tvFirstName);
+        phoneTxt = findViewById(R.id.phone2);
+        email = findViewById(R.id.tvEmail);
+        Button btnLogout = findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 logoutUser();
             }
         });
-        database=FirebaseDatabase.getInstance();
-        uid=currentUser.getUid();
-        DatabaseReference reference=database.getReference("users").child(uid);
+        database = FirebaseDatabase.getInstance();
+        uid = currentUser.getUid();
+        DatabaseReference reference = database.getReference("users").child(uid);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user=snapshot.getValue(User.class);
-                if (user!=null){
-                    fullNameTxt.setText("Full Name: "+user.getFullname());
-                    email.setText("Email: "+user.getEmail());
-                    phoneTxt.setText("Phone: "+ user.getPhone());
-                    if (user.getFingerPrintStatusEnum().equals(FingerPrintStatusEnum.Pending)){
+                User user = snapshot.getValue(User.class);
+                if (user != null) {
+                    fullNameTxt.setText("Full Name: " + user.getFullname());
+                    email.setText("Email: " + user.getEmail());
+                    phoneTxt.setText("Phone: " + user.getPhone());
+                    if (user.getFingerPrintStatusEnum().equals(FingerPrintStatusEnum.Pending)) {
                         openDialog();
                     }
                 }
@@ -79,14 +80,14 @@ public class MainActivity extends AppCompatActivity  implements FingerPrintConfi
 
             }
         });
-        Button post=findViewById(R.id.post);
+        Button post = findViewById(R.id.post);
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 postimages();
             }
         });
-        Button addfriendbyUsername=findViewById(R.id.addfriend);
+        Button addfriendbyUsername = findViewById(R.id.addfriend);
         addfriendbyUsername.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity  implements FingerPrintConfi
             }
         });
 
-        Button feed=findViewById(R.id.feed);
+        Button feed = findViewById(R.id.feed);
         feed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,76 +104,79 @@ public class MainActivity extends AppCompatActivity  implements FingerPrintConfi
         });
 
         Button createEvent = findViewById(R.id.createEvent);
-        createEvent.setOnClickListener((v) -> {
-            createEvent();
-        });
+        createEvent.setOnClickListener(this::createEvent);
 
-        Button confirmFriendsRequest=findViewById(R.id.confirmFriendsRequest);
-        confirmFriendsRequest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FriendsRequest();
-            }
-        });
+        Button openMap = findViewById(R.id.openMap);
+        openMap.setOnClickListener(this::openMap);
+
+        Button openFriends = findViewById(R.id.openFriends);
+        openFriends.setOnClickListener(this::openFriends);
     }
 
-    private void FriendsRequest() {
-        Intent intent=new Intent(this, AcceptRejectFriendReqest.class);
-        startActivity(intent);
-        //finish();
+    private void openDialog() {
+        FingerPrintConfirmationDialog dialog = new FingerPrintConfirmationDialog();
+        dialog.show(getSupportFragmentManager(), "Example");
     }
 
-    private void openDialog(){
-        FingerPrintConfirmationDialog dialog=new FingerPrintConfirmationDialog();
-        dialog.show(getSupportFragmentManager(),"Example");
-    }
-
-    private void postimages(){
-        Intent intent=new Intent(this, PostActivity.class);
+    private void postimages() {
+        Intent intent = new Intent(this, PostActivity.class);
         startActivity(intent);
         finish();
     }
 
-    private void logoutUser(){
+    private void logoutUser() {
         FirebaseAuth.getInstance().signOut();
-        Intent intent=new Intent(this,Login.class);
+        Intent intent = new Intent(this, Login.class);
         startActivity(intent);
         finish();
     }
 
-    private void addfriendUsername(){
-        Intent intent=new Intent(this, AddfriendByUsername.class);
+    private void addfriendUsername() {
+        Intent intent = new Intent(this, AddfriendByUsername.class);
         startActivity(intent);
         //finish();
     }
-    private void feed(){
-        Intent intent=new Intent(this, FeedPost.class);
+
+    private void feed() {
+        Intent intent = new Intent(this, FeedPost.class);
         startActivity(intent);
-       // finish();
+        // finish();
     }
 
-    private void createEvent() {
+    private void createEvent(View v) {
         Intent intent = new Intent(this, CreateEventActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void openMap(View v) {
+        Intent intent = new Intent(this, MapActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void openFriends(View v) {
+        Intent intent = new Intent(this, FriendsListActivity.class);
         startActivity(intent);
         finish();
     }
 
     @Override
     public void onConfirmed() {
-        DatabaseReference reference=database.getReference("users").child(uid);
+        DatabaseReference reference = database.getReference("users").child(uid);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user=snapshot.getValue(User.class);
-                if (user!=null){
-                    user.fingerPrintStatusEnum=FingerPrintStatusEnum.Accept;
+                User user = snapshot.getValue(User.class);
+                if (user != null) {
+                    user.fingerPrintStatusEnum = FingerPrintStatusEnum.Accept;
                     reference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
-                            SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
-                            editor.putString("email",user.email);
-                            editor.putString("password",user.password);
-                            editor.putBoolean("isLogin",true);
+                            SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
+                            editor.putString("email", user.email);
+                            editor.putString("password", user.password);
+                            editor.putBoolean("isLogin", true);
                             editor.apply();
                         }
                     });
@@ -188,13 +192,13 @@ public class MainActivity extends AppCompatActivity  implements FingerPrintConfi
 
     @Override
     public void onCancelled() {
-        DatabaseReference reference=database.getReference("users").child(uid);
+        DatabaseReference reference = database.getReference("users").child(uid);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User user=snapshot.getValue(User.class);
-                if (user!=null){
-                    user.fingerPrintStatusEnum=FingerPrintStatusEnum.Reject;
+                User user = snapshot.getValue(User.class);
+                if (user != null) {
+                    user.fingerPrintStatusEnum = FingerPrintStatusEnum.Reject;
                     reference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
@@ -203,6 +207,7 @@ public class MainActivity extends AppCompatActivity  implements FingerPrintConfi
                     });
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
